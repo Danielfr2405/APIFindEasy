@@ -11,8 +11,9 @@ def home():
 
 @app.route('/validaDados', methods=['GET'])
 def retorno():
-    oJson = findPattern()
-    return oJson, 200
+#     oJson = findPattern()
+#     return oJson, 200
+    return "<h1> Hellow World!!! </h1>"
 
 
 if __name__ == '__main__':
