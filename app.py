@@ -10,7 +10,7 @@ cors = CORS(app)
 
 @app.route("/")
 def home():
-    return  redirect("https://tdn.totvs.com/pages/releaseview.action?pageId=497910397")
+    return 'redirect("https://tdn.totvs.com/pages/releaseview.action?pageId=497910397")'
 
 
 @app.route('/validaDados', methods=['GET'])
