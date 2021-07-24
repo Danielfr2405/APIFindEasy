@@ -1,11 +1,8 @@
 import os
 from flask import Flask, request, redirect, render_template  # necessário instalar o flask (pip install -U Flask)
 from validaDados import findPattern # Importa a função findPattern que está dentro do arquivo validaDados.py
-from flask_cors import CORS
 
 app = Flask(__name__)
-
-cors = CORS(app)
 
 
 @app.route("/")

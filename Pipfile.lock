@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "0cea18c67ff2db527a25158ed63d6eaa4021d8a06dc1526a2a141b5a326a40cc"
+            "sha256": "764d925cd87044a18c1f6bc00b3bb0481b381327a48cb96d7899003a6f301f68"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -11,7 +11,7 @@
             {
                 "name": "pypi",
                 "url": "https://pypi.org/simple",
-                "verify_ssl": true
+                "verify_ssl": false
             }
         ]
     },
@@ -54,14 +54,6 @@
             ],
             "index": "pypi",
             "version": "==1.1.2"
-        },
-        "flask-cors": {
-            "hashes": [
-                "sha256:74efc975af1194fc7891ff5cd85b0f7478be4f7f59fe158102e91abb72bb4438",
-                "sha256:b60839393f3b84a0f3746f6cdca56c1ad7426aa738b70d6c61375857823181de"
-            ],
-            "index": "pypi",
-            "version": "==3.0.10"
         },
         "idna": {
             "hashes": [
@@ -134,14 +126,6 @@
             ],
             "index": "pypi",
             "version": "==2.26.0"
-        },
-        "six": {
-            "hashes": [
-                "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926",
-                "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"
-            ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2'",
-            "version": "==1.16.0"
         },
         "urllib3": {
             "hashes": [
