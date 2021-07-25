@@ -12,15 +12,10 @@ def home():
 
 @app.route('/validaDados', methods=['GET'])
 def retorno():
-#     oJson = findPattern()
-#     return oJson, 200
-    return "<h1> Hellow World!!! </h1>"
+    oJson = findPattern()
+    return oJson, 200
 
 
 def main():
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
-
-if __name__ == '__main__':
-#     app.run()
-    main()
