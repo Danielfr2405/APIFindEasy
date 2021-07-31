@@ -1,7 +1,7 @@
 import json
 import os
 from flask import Flask, request
-from db.database import DatabaseMongoDB
+from db.banco_de_dados import DatabaseMongoDB
 from consult.consult_db import ConsultDatabase
 
 app = Flask(__name__)
