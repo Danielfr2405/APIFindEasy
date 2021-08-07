@@ -2,6 +2,7 @@ import certifi
 from pymongo import MongoClient
 
 ca = certifi.where()
+url = ''
 
 
 class DatabaseMongoDB:
@@ -9,9 +10,8 @@ class DatabaseMongoDB:
     @staticmethod
     def connection():
         client = MongoClient(
-            "",
+            url,
             tlsCAFile=ca
-            # ssl_cert_reqs=ssl.CERT_NONE
         )
         db = client.DBFindEasy
 
