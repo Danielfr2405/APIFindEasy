@@ -7,7 +7,7 @@ app = Flask(__name__)
 # app.debug = True
 
 
-@app.route('/insert', methods=['POST'])
+@app.route('/Insert', methods=['POST'])
 def insert_coordenada():
     try:
         data = request.data
@@ -24,12 +24,12 @@ def insert_coordenada():
         print(e)
         return gera_response(
             message='Não foi possível processar a inclusão',
-            data=[],
+            data='',
             status_code=500
         )
 
 
-@app.route('/findId/<id_obj>', methods=['GET'])
+@app.route('/FindById/<id_obj>', methods=['GET'])
 def find_coordenada(id_obj):
     try:
         finds_founds = ConsultDatabase().find_registers(
@@ -45,7 +45,7 @@ def find_coordenada(id_obj):
         print(e)
         return gera_response(
             message='Não foi possível consultar as coordenadas!',
-            data=[],
+            data='',
             status_code=500
         )
 
