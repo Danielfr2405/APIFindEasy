@@ -41,15 +41,28 @@ class ConsultDatabase:
 
     @staticmethod
     def calculo_latitude(latitude):
-        latitude = latitude / 60
-        latitude = (latitude + 23.0) * -1
-        return latitude
+        split_latitude = latitude.split('.')
+        valor_soma = split_latitude[0][:-2]
+        aux1 = split_latitude[0][-2:len(split_latitude[0])]
+        aux2 = split_latitude[1]
+
+        valor = float(f"{ aux1 }.{ aux2 }")
+        valor = valor / 60
+        valor = (valor + float(valor_soma)) * -1
+        return valor
 
     @staticmethod
     def calculo_longitude(longitude):
-        longitude = longitude / 60
-        longitude = (longitude + 046.0) * -1
-        return longitude
+        split_longitude = longitude.split('.')
+        valor_soma = split_longitude[0][:-2]
+
+        aux1 = split_longitude[0][-2:len(split_longitude[0])]
+        aux2 = split_longitude[1]
+
+        valor = float(f"{ aux1 }.{ aux2 }")
+        valor = valor / 60
+        valor = (valor + float(valor_soma)) * -1
+        return valor
 
     def find_registers(self, table, id_obj):
         objects = self.db[table]
