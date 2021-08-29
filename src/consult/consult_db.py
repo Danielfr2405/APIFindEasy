@@ -11,8 +11,9 @@ class ConsultDatabase:
         self.db = DatabaseMongoDB.connection()
 
     def insert_register(self, table, response) -> str:
-        my_obj = {"Atual": {}, "Anterior": {}, "_id": response['id']}
-        obj_find = self.exists_obj(table=table, id_obj=response['id'])
+        id_obj = str(response['id'])
+        my_obj = {"Atual": {}, "Anterior": {}, "_id": id_obj}
+        obj_find = self.exists_obj(table=table, id_obj=id_obj)
 
         item = MeuObjetoModel()
         item.latitude = self.calculo_latitude(response['latitude'])
@@ -26,16 +27,16 @@ class ConsultDatabase:
         if self.db is not None:
             self.db[table].insert_one(my_obj)
 
-        return self.db[table].find_one()
+        return self.find_registers(table=table, id_obj=id_obj)
 
     def exists_obj(self, table, id_obj):
         obj_find = {}
 
-        for obj in self.db[table].find({'_id': id_obj}):
+        for obj in self.find_registers(table=table, id_obj=id_obj):
             obj_find = obj
 
         if obj_find:
-            self.db[table].delete_many({'_id': id_obj})
+            self.delete_registers(table=table, id_obj=id_obj)
 
         return obj_find
 
@@ -64,11 +65,19 @@ class ConsultDatabase:
         valor = (valor + float(valor_soma)) * -1
         return valor
 
-    def find_registers(self, table, id_obj):
+    def find_registers(self, table, id_obj=None):
         objects = self.db[table]
         lists_found = []
+        filter_db: object = {"_id": id_obj} if id_obj else {}
 
-        for obj in objects.find({"_id": id_obj}):
+        for obj in objects.find(filter_db):
             lists_found.append(obj)
 
         return lists_found
+
+    def delete_registers(self, table, id_obj=None):
+        filter_db: object = {"_id": id_obj} if id_obj else {}
+        self.db[table].delete_many(filter_db)
+
+        return self.find_registers(table=table)
+

@@ -18,8 +18,8 @@ def insert_coordenada():
                 response=json.loads(data)
             )
 
-        is_ok = id_obj and id_obj.get('id') != '0'
-        return gera_response('', is_ok, 200)
+        print(id_obj)
+        return gera_response('', len(id_obj) > 0, 200)
     except Exception as e:
         print(e)
         return gera_response(
@@ -45,6 +45,26 @@ def find_coordenada(id_obj):
         print(e)
         return gera_response(
             message='Não foi possível consultar as coordenadas!',
+            data='',
+            status_code=500
+        )
+
+
+@app.route('/DeleteAll', methods=['Post'])
+def delete_all():
+    try:
+        finds_founds = ConsultDatabase().delete_registers(
+            table='coordenadas'
+        )
+        return gera_response(
+            'Deleção realizada com sucesso!',
+            len(finds_founds) == 0,
+            200
+        )
+    except Exception as e:
+        print(e)
+        return gera_response(
+            message='Não foi possível deletar as coordenadas!',
             data='',
             status_code=500
         )
