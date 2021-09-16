@@ -1,6 +1,7 @@
 import datetime
 import json
 from src.dto.meu_objeto_model import MeuObjetoModel
+from src.dto.meu_objeto_model import CadastroFindEasy
 from src.db.banco_de_dados import DatabaseMongoDB
 
 
@@ -80,4 +81,31 @@ class ConsultDatabase:
         self.db[table].delete_many(filter_db)
 
         return self.find_registers(table=table)
+
+    def inclui_usuario(self, table, response) -> str:
+        my_obj = {
+                # "_id": response['id'],
+                  "nome": response['nome'],
+                  "email": response['email'],
+                  "usuario": response['usuario'],
+                  "dispositivo": response['dispositivo'],
+                  "senha": response['senha'],
+                  "dt_nasc": response['dt_nasc']
+                  }
+
+        if self.db is not None:
+            self.db[table].insert_one(my_obj)
+
+        return self.find_registers(table=table, id_obj="1")
+
+    def find_user(self, table, response):
+        usuario = response['usuario']
+        objects = self.db[table]
+        lists_found = []
+        filter_db: object = {"usuario": usuario} if usuario else {}
+
+        for obj in objects.find(filter_db):
+            lists_found.append(obj)
+
+        return lists_found
 
