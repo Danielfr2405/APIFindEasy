@@ -1,11 +1,10 @@
 import datetime
 import json
 from src.dto.meu_objeto_model import MeuObjetoModel
-from src.dto.meu_objeto_model import CadastroFindEasy
 from src.db.banco_de_dados import DatabaseMongoDB
 
 
-class ConsultDatabase:
+class MonitoringObject:
     db = None
 
     def __init__(self):
@@ -17,9 +16,11 @@ class ConsultDatabase:
         obj_find = self.exists_obj(table=table, id_obj=id_obj)
 
         item = MeuObjetoModel()
-        item.latitude = self.calculo_latitude(response['latitude'])
-        item.longitude = self.calculo_longitude(response['longitude'])
-        item.data_inclusao = datetime.datetime.now().strftime('%d/%m/%Y %H:%M')
+        item.latitude = self.calculo_coordenadas(response['latitude'])
+        item.longitude = self.calculo_coordenadas(response['longitude'])
+        item.data_inclusao = datetime.datetime.now().strftime(
+            '%d/%m/%Y às %H:%M hs'
+        )
 
         my_obj["Anterior"] = \
             obj_find["Atual"] if obj_find and obj_find["Atual"] else {}
@@ -42,24 +43,11 @@ class ConsultDatabase:
         return obj_find
 
     @staticmethod
-    def calculo_latitude(latitude):
+    def calculo_coordenadas(latitude):
         split_latitude = latitude.split('.')
         valor_soma = split_latitude[0][:-2]
         aux1 = split_latitude[0][-2:len(split_latitude[0])]
         aux2 = split_latitude[1]
-
-        valor = float(f"{ aux1 }.{ aux2 }")
-        valor = valor / 60
-        valor = (valor + float(valor_soma)) * -1
-        return valor
-
-    @staticmethod
-    def calculo_longitude(longitude):
-        split_longitude = longitude.split('.')
-        valor_soma = split_longitude[0][:-2]
-
-        aux1 = split_longitude[0][-2:len(split_longitude[0])]
-        aux2 = split_longitude[1]
 
         valor = float(f"{ aux1 }.{ aux2 }")
         valor = valor / 60
@@ -81,31 +69,3 @@ class ConsultDatabase:
         self.db[table].delete_many(filter_db)
 
         return self.find_registers(table=table)
-
-    def inclui_usuario(self, table, response) -> str:
-        my_obj = {
-                # "_id": response['id'],
-                  "nome": response['nome'],
-                  "email": response['email'],
-                  "usuario": response['usuario'],
-                  "dispositivo": response['dispositivo'],
-                  "senha": response['senha'],
-                  "dt_nasc": response['dt_nasc']
-                  }
-
-        if self.db is not None:
-            self.db[table].insert_one(my_obj)
-
-        return self.find_registers(table=table, id_obj="1")
-
-    def find_user(self, table, response):
-        usuario = response['usuario']
-        objects = self.db[table]
-        lists_found = []
-        filter_db: object = {"usuario": usuario} if usuario else {}
-
-        for obj in objects.find(filter_db):
-            lists_found.append(obj)
-
-        return lists_found
-

@@ -2,7 +2,9 @@ import json
 import os
 import base64
 from flask import Flask, request
-from consult.consult_db import ConsultDatabase
+from controler.monitoring import MonitoringObject as Monitoring
+
+from controler.auth_guardians import AuthGuardians as Auth
 
 app = Flask(__name__)
 app.debug = True
@@ -14,7 +16,7 @@ def insert_coordenada():
         data = request.data
         data = data.decode('utf-8')
         if data:
-            id_obj = ConsultDatabase().insert_register(
+            id_obj = Monitoring().insert_register(
                 table='coordenadas',
                 response=json.loads(data)
             )
@@ -33,7 +35,7 @@ def insert_coordenada():
 @app.route('/FindById/<id_obj>', methods=['GET'])
 def find_coordenada(id_obj):
     try:
-        finds_founds = ConsultDatabase().find_registers(
+        finds_founds = Monitoring().find_registers(
             table='coordenadas',
             id_obj=id_obj
         )
@@ -54,7 +56,7 @@ def find_coordenada(id_obj):
 @app.route('/DeleteAll', methods=['Post'])
 def delete_all():
     try:
-        finds_founds = ConsultDatabase().delete_registers(
+        finds_founds = Monitoring().delete_registers(
             table='coordenadas'
         )
         return gera_response(
@@ -69,32 +71,43 @@ def delete_all():
             data='',
             status_code=500
         )
+
+
+@app.route('/Auth', methods=['Post'])
+def auth_guardian():
+    try:
+        data = request.data
+        data = data.decode('utf-8')
+        if data:
+            if 'usuario' in data:
+                message, data, status_code = Auth().insert(
+                    table='authGuardians', response=json.loads(data)
+                )
+            else:
+                message, data, status_code = Auth().login(
+                    table='authGuardians',
+                    response=data
+                )
+            return gera_response(message, data, status_code)
+    except Exception as e:
+        print(e)
+        return gera_response(
+            message='Houve falha na autenticação do usuário!',
+            data='',
+            status_code=500
+        )
+
+
 @app.route('/CadastraUsuario', methods=['Post'])
 def cadastra_usuario():
     try:
         data = request.data
         data = data.decode('utf-8')
         if data:
-            usuarioExiste = ConsultDatabase().find_user(
-                table='cadastros', response=json.loads(data)
+            message, data, status_code = Auth().insert(
+                table='authGuardians', response=json.loads(data)
             )
-
-            if len(usuarioExiste) == 0:
-
-                id_obj = ConsultDatabase().inclui_usuario(
-                table='cadastros',
-                response=json.loads(data)
-            )
-                print(id_obj)
-                return gera_response('', len(id_obj) > 0, 200)
-            else:
-                return gera_response(
-                    message='Não foi possível realizar o cadastro. Uusário já existe, verifique!',
-                    data='',
-                    status_code=500
-                )
-
-
+            return gera_response(message, data, status_code)
     except Exception as e:
         print(e)
         return gera_response(
@@ -107,8 +120,8 @@ def cadastra_usuario():
 @app.route('/FindUser/<user>', methods=['GET'])
 def find_usuario(user):
     try:
-        dados_usuario = ConsultDatabase().find_user(
-                table='cadastros',
+        dados_usuario = Auth().find_user(
+                table='authGuardians',
                 response={'usuario': user}
             )
 
@@ -116,8 +129,12 @@ def find_usuario(user):
             return gera_response(
                 'Consulta realizada com sucesso!',
                 {
-                    "usuario": base64.b64encode(bytes(dados_usuario[0]['usuario'], 'utf-8')),
-                    "senha": base64.b64encode(bytes(dados_usuario[0]['senha'], 'utf-8'))
+                    "usuario": base64.b64encode(
+                        bytes(dados_usuario[0]['usuario'], 'utf-8')
+                    ),
+                    "senha": base64.b64encode(
+                        bytes(dados_usuario[0]['senha'], 'utf-8')
+                    )
                 },
                 200
             )
@@ -130,7 +147,8 @@ def find_usuario(user):
     except Exception as e:
         print(e)
         return gera_response(
-            message='Não foi possível consultar os dados do cadastro do usuário!',
+            message=
+            'Não foi possível consultar os dados do cadastro do usuário!',
             data='',
             status_code=500
         )
@@ -142,11 +160,7 @@ def gera_response(message, data, status_code):
     if message:
         body['message'] = message
 
-    if 'usuario' in data:
-        body['usuario'] = str(data['usuario'])
-        body['senha'] = str(data['senha'])
-    else:
-        body['data'] = data
+    body['data'] = data
 
     return body, status_code
 
