@@ -98,52 +98,21 @@ def auth_guardian():
         )
 
 
-@app.route('/CadastraUsuario', methods=['Post'])
-def cadastra_usuario():
-    try:
-        data = request.data
-        data = data.decode('utf-8')
-        if data:
-            message, data, status_code = Auth().insert(
-                table='authGuardians', response=json.loads(data)
-            )
-            return gera_response(message, data, status_code)
-    except Exception as e:
-        print(e)
-        return gera_response(
-            message='Não foi possível processar a inclusão de usuário',
-            data='',
-            status_code=500
-        )
-
-
 @app.route('/FindUser/<user>', methods=['GET'])
 def find_usuario(user):
     try:
-        dados_usuario = Auth().find_user(
+        dados_usuario = Auth().search_username(
                 table='authGuardians',
-                response={'usuario': user}
+                info_user=[user]
             )
 
-        if len(dados_usuario) > 0:
-            return gera_response(
-                'Consulta realizada com sucesso!',
-                {
-                    "usuario": base64.b64encode(
-                        bytes(dados_usuario[0]['usuario'], 'utf-8')
-                    ),
-                    "senha": base64.b64encode(
-                        bytes(dados_usuario[0]['senha'], 'utf-8')
-                    )
-                },
-                200
-            )
-        else:
-            return gera_response(
-                message='Usuário ou senha incorretos. Verifique!',
-                data='',
-                status_code=200
-            )
+        dados_usuario.pop('password')
+
+        return gera_response(
+            'Consulta realizada com sucesso!',
+            dados_usuario,
+            200
+        )
     except Exception as e:
         print(e)
         return gera_response(
