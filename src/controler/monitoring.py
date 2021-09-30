@@ -18,9 +18,7 @@ class MonitoringObject:
         item = MeuObjetoModel()
         item.latitude = self.calculo_coordenadas(response['latitude'])
         item.longitude = self.calculo_coordenadas(response['longitude'])
-        item.data_inclusao = datetime.datetime.now().strftime(
-            '%d/%m/%Y às %H:%M hs'
-        )
+        item.data_inclusao = datetime.datetime.now().isoformat()
 
         my_obj["Anterior"] = \
             obj_find["Atual"] if obj_find and obj_find["Atual"] else {}
